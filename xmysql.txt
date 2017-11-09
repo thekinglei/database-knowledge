@@ -1,4 +1,5 @@
-xmysql:可为MySql生成REST API的神奇命令  
+xmysql:可为MySql生成REST API的神奇命令  
+参考文档：http://blog.csdn.net/dev_csdn/article/details/78480522  
 为什么用这个命令?
 
 为MySql数据库快速生成REST API，而且还不遵循诸如rails、django等框架的约定，这可能是一种不太受欢迎的冒险行为。
