@@ -1,0 +1,161 @@
+xmysql:可为MySql生成REST API的神奇命令  
+为什么用这个命令?
+
+为MySql数据库快速生成REST API，而且还不遵循诸如rails、django等框架的约定，这可能是一种不太受欢迎的冒险行为。
+
+
+ 
+但是也正因为如此。
+
+该命令的功能都是由node packages提供支持的：(express, mysql) => { xmysql }
+
+安装与用法
+
+npm install -g xmysql
+
+xmysql -h localhost -u mysqlUsername -p mysqlPassword -d databaseName
+
+http://localhost:3000
+1
+2
+3
+4
+5
+6
+这样就可以了。
+
+特点
+
+只要是MySql数据库，就都可以生成API
+无论主键，外键，表等的命名约定如何，均可提供API
+增删改查：日常操作
+支持复合主键
+分页
+排序
+字段
+关系表
+可运行动态查询
+可以使用像Postman 或者类似的HTTP客户端工具来调用REST API。
+
+如果你的系统上面还没有这些的话，请先下载node，mysql（setup mysql），示例数据库。
+
+根路径
+
+直接访问根路径(localhost:3000/)会返回每张表中schema的所有REST API。
+
+CRUD APIs 日常操作
+
+GET /api/:tableName
+POST /api/:tableName
+GET /api/:tableName/:id
+PUT /api/:tableName/:id
+GET /api/:tableName/count
+GET /api/:tableName/exists
+GET /api/:parentTable/:id/:childTable
+DELETE /api/:tableName/:id
+POST /dynamic
+其它的API
+
+GET /api/:tableName/describe
+GET /api/tables
+支持复合主键
+
+_（三个下划线）
+
+/api/payments/103___JM555205
+1
+2
+_：如果有多个主键 - 如图所示，用三个下划线分隔就可以了
+
+分页
+
+_p & _size
+
+前者表示分多少页，后者表示响应行的大小。
+
+默认情况下，每张表上面的GET请求会返回20条记录，最多100条。
+
+/api/payments?_size=50
+
+/api/payments?_p=2
+
+/api/payments?_p=2&_size=50
+1
+2
+3
+4
+5
+6
+排序
+
+_sort
+
+/api/payments?_sort=column1
+1
+2
+上述命令表示按column1升序排列
+
+/api/payments?_sort=-column1
+1
+2
+上述命令表示按column1降序排列
+
+/api/payments?_sort=column1,-column2
+1
+2
+上述命令表示按column1升序排列，再按column2降序排列
+
+字段
+
+/api/payments?_fields=customerNumber,checkNumber
+1
+2
+上述命令表示只得到每条记录的customerNumber和checkNumber这两个字段
+
+/api/payments?_fields=-checkNumber
+1
+2
+上述命令表示获取每行记录中除checkNumber以外的所有字段
+
+运行动态查询
+
+在数据库上面可以通过将方法POST到localhost:3000/dynamic该URL上面就可以运行动态查询了。
+
+这仅支持-h localhost或-h 127.0.0.1选项中才能启用。
+
+Post的body里面有两个字段：query和params。
+
+query：SQL查询或SQL prepared查询（带??和？的）
+
+params：SQL prepared查询的参数
+POST /dynamic   
+
+{
+    "query": "select * from ?? limit 1,20",
+    "params": ["customers"]
+}
+1
+2
+3
+4
+5
+6
+7
+关系表
+
+xmysql自动识别外键关系并提供GET api。
+
+/api/customers/103/payments
+1
+2
+例如：Customers是父表，payments是子表。API调用将会返回103号客户的所有付款记录。
+
+什么时候应该使用
+
+只需要REST API，而不需要任何麻烦的MySql数据库。
+正在学习新的前端框架，而且MySql数据库需要使用REST API。
+正在做demo或者黑客等工作
+什么时候不该不用
+
+如果需要的是一个完整的MVC框架，ACL，授权等等——而并不是这个。
+在”什么时候应该使用”章节里面没有提到的场景都不要用
